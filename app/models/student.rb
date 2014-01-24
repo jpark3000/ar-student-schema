@@ -13,6 +13,10 @@ class Student < ActiveRecord::Base
   has_many :teachers, through: :teacher_assignments
 
 
+  def full_name
+    [first_name, last_name].join(' ')
+  end
+
   def age_validation
     if age < 5
       errors.add(:age, "No youngins")

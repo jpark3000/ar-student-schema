@@ -5,17 +5,17 @@ require_relative 'lib/students_importer'
 
 
 desc "create the database"
-task "db:create" do
+task "dbcreate" do
   touch 'db/ar-students.sqlite3'
 end
 
 desc "drop the database"
-task "db:drop" do
+task "dbdrop" do
   rm_f 'db/ar-students.sqlite3'
 end
 
 desc "migrate the database (options: VERSION=x, VERBOSE=false, SCOPE=blog)."
-task "db:migrate" do
+task "dbmigrate" do
   ActiveRecord::Migrator.migrations_paths << File.dirname(__FILE__) + 'db/migrate'
   ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
   ActiveRecord::Migrator.migrate(ActiveRecord::Migrator.migrations_paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil) do |migration|
@@ -24,7 +24,7 @@ task "db:migrate" do
 end
 
 desc "populate the test database with sample data"
-task "db:populate" do
+task "dbpopulate" do
   StudentsImporter.import
 end
 
@@ -35,5 +35,9 @@ end
 
 desc "Run the specs"
 RSpec::Core::RakeTask.new(:specs)
+
+desc "redo"
+task "db:fuckit" =>[:dbdrop, :dbcreate, :dbmigrate, :dbpopulate] do
+end
 
 task :default  => :specs
